@@ -1,27 +1,28 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import axios from 'axios';
+import firebase from 'firebase';
 
 const ROOT_URL = 'https://us-central1-one-time-password-8c130.cloudfunctions.net';
 
-class SignUpForm extends Component {
+class SignInForm extends Component {
   // equivalent to setting this.state.phone in the constructor
   // this is es2017/es7 syntax
-  state = { phone: '' };
+  state = { code: '', phone: '' };
 
   // note: if you use an arrow function ( handleSubmit = () => { }) you don't
   //  have to bind(this).
   handleSubmit = async () => {
-    const createUserUrl = `${ROOT_URL}/createUser`;
-    const requestOneTimePassUrl = `${ROOT_URL}/requestOneTimePassword`;
+    const { phone, code } = this.state;
+    const verifyOneTimePassUrl = `${ROOT_URL}/verifyOneTimePassword`;
 
-    // async/await example:
-    // let response = await axios.post(createUserUrl, { phone: this.state.phone });
-    // console.log(response)
     try {
-      await axios.post(createUserUrl, { phone: this.state.phone });
-      await axios.post(requestOneTimePassUrl, { phone: this.state.phone });
+      // verify password
+      let response = await axios.post(verifyOneTimePassUrl, { phone, code });
+      console.log(response);
+      // log in with json web token if pass is correct
+      firebase.auth().signInWithCustomToken(response.data.token);
     } catch (err) {
       console.log(err);
     }
@@ -32,12 +33,18 @@ class SignUpForm extends Component {
       <View style={{ width: '100%' }}>
         <View style={{ marginBottom: 10 }}>
           <Input
-            containerStyle={{ width: '100%' }}
-            inputContainerStyle={{ width: '100%' }}
+            style={{ width: '100%' }}
             label='Enter Phone Number'
             value={this.state.phone}
             onChangeText={phone => this.setState({ phone })}
           />
+          <Input
+            style={{ width: '100%' }}
+            label='Enter Code'
+            value={this.state.code}
+            onChangeText={code => this.setState({ code })}
+          />
+
         </View>
         <Button
           onPress={this.handleSubmit.bind(this)}
@@ -48,4 +55,4 @@ class SignUpForm extends Component {
   }
 }
 
-export default SignUpForm;
+export default SignInForm;
