@@ -10,7 +10,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     const config = {
-      apiKey: 'AIzaSyAemXmtpvQ3VtFKHsXmyY1ZxFEI1ECGArk',
+      apiKey: '',
       authDomain: 'one-time-password-8c130.firebaseapp.com',
       databaseURL: 'https://one-time-password-8c130.firebaseio.com',
       projectId: 'one-time-password-8c130',
